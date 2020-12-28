@@ -16,7 +16,7 @@ ARG CONTAINERD_VERSION=v1.4.3
 ARG RUNC_VERSION=v1.0.0-rc92
 ARG CNI_PLUGINS_VERSION=v0.9.0
 
-FROM golang:1.13-buster AS golang-base
+FROM golang:1.15-buster AS golang-base
 
 # Build containerd
 FROM golang-base AS containerd-dev

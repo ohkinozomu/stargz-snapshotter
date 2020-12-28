@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #   Copyright The containerd Authors.
 
@@ -39,6 +39,9 @@ function check_remote_snapshots {
     local REMOTE=0
     local LOCAL=0
 
+    echo 'cat LOG_FILE'
+    cat "${LOG_FILE}"
+    echo 'LOG_FILE done'
     REMOTE=$(jq -r 'select(."'"${LOG_REMOTE_SNAPSHOT}"'" == "true")' "${LOG_FILE}" | wc -l)
     LOCAL=$(jq -r 'select(."'"${LOG_REMOTE_SNAPSHOT}"'" == "false")' "${LOG_FILE}" | wc -l)
     if [[ ${LOCAL} -gt 0 ]] ; then

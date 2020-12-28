@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #   Copyright The containerd Authors.
 

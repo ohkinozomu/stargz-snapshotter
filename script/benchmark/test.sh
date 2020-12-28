@@ -108,17 +108,30 @@ LOG_FILE="${LOG_DIR}/containerd-stargz-grpc-benchmark-$(date '+%Y%m%d%H%M%S')"
 touch "${LOG_FILE}"
 echo "Logging to >>> ${LOG_FILE} (will finally be stored under ${OUTPUTDIR})"
 
-echo "Benchmarking..."
+echo "Benchmarking(1)..."
 FAIL=
 if ! ( cd "${CONTEXT}" && \
            docker-compose -f "${DOCKER_COMPOSE_YAML}" build ${DOCKER_BUILD_ARGS:-} \
-                          "${BENCHMARKING_NODE}" && \
-           docker-compose -f "${DOCKER_COMPOSE_YAML}" up -d --force-recreate && \
-           docker exec -e BENCHMARK_SAMPLES_NUM -i "${BENCHMARKING_CONTAINER}" \
+                          "${BENCHMARKING_NODE}") ; then
+    echo "Failed to run benchmark(1)."
+    FAIL=true
+fi
+
+echo "Benchmarking(2)..."
+FAIL=
+if ! ( docker-compose -f "${DOCKER_COMPOSE_YAML}" up -d --force-recreate) ; then
+    echo "Failed to run benchmark(2)."
+    FAIL=true
+fi
+
+echo "Benchmarking(3)..."
+FAIL=
+if ! ( docker exec -e BENCHMARK_SAMPLES_NUM -i "${BENCHMARKING_CONTAINER}" \
                   script/benchmark/hello-bench/run.sh \
                   "${BENCHMARK_REGISTRY:-docker.io}/${BENCHMARK_USER}" \
                   ${BENCHMARK_TARGETS} &> "${LOG_FILE}" ) ; then
-    echo "Failed to run benchmark."
+    echo "Failed to run benchmark(3)."
+    cat "${LOG_FILE}"
     FAIL=true
 fi
 
